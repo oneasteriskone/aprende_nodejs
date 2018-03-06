@@ -1,0 +1,401 @@
+<!doctype html>  
+<html lang="en">
+	
+	<head>
+		<meta charset="utf-8">
+		
+		<title>Aprende node.js</title>
+
+		<meta name="description" content="An easy to use CSS 3D slideshow tool for quickly creating good looking HTML presentations.">
+		<meta name="author" content="Andrei Oprea | @an_rei">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+		
+		<link rel="stylesheet" href="css/main.css">
+		<link rel="stylesheet" href="css/night.css" id="theme">
+		<link rel="stylesheet" href="css/print.css" type="text/css" media="print">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+		
+	</head>
+<div class="reveal"><div class="slides">
+        <section>
+          <div class="kreator-slide-content"><h1>Aprende N<span style="color: #026e00;">o</span>de<span style="color: #026e00;">.</span>js</h1><div><br></div></div>
+          <p>David Sanchez</p>
+        </section>
+
+        <section>
+        	<h3>Que vamos aprender hoy?</h3>
+        	<ul>
+        		<li><span style="color: #026e00;">ME</span>A<span style="color: #026e00;">N</span></li>
+        		<li>Express</li>
+        		<li>MongoDB - Mongoose schemas</li>
+        	</ul>
+        	<hr/>
+        	<p>En aproximandamente 1hr~.</p>
+        </section>
+
+      	<section>
+          <div><h3>Que es <img src="img/nodejs_logo.svg" style="width: 25%; height: 25%;">?</h3></div>
+          <p>"Un <i>runtime</i> de JavaScript impulsado por eventos asíncronos, Node está diseñado para crear aplicaciones de red escalables." - <a href="https://nodejs.org/en/about/">node.js</a></p>
+        </section>
+
+        <section>
+        	<h3>Que vamos hacer?</h3>
+        	<p>RESTful API para Cursos</p>
+        </section>
+
+        <section>
+        	<h3>Que vamos a necesitar?</h3>
+        	<pre><code data-trim data-noescape>
+        		node.js 
+        		mongodb 
+        		Editor de texto
+        		Google Chrome -> ARC (Advanced REST Client)
+        	</code></pre>
+        </section>
+
+        <section>
+        	<h3>Que es RESTFful?</h3>
+        	<p>REST = <a href='https://es.wikipedia.org/wiki/Transferencia_de_Estado_Representacional'>Transferencia de estado representacional</a>.</p>
+        	<p>"No saber que hay del otro lado, pero saber que formato tiene."</p>
+        	<ul>
+        		<li>POST = Creación</li>
+        		<li>PUT = Mutación</li>
+        		<li>DELETE = Eliminación</li>
+        	</ul>
+        	
+        	<hr/>
+
+        	<h4>Ejemplos</h4>
+        	<ul>
+        		<li><a href="https://developer.londontheatredirect.com/">London Theatre</a></li>
+        		<li><a href="http://developer.nytimes.com/">New York times</a></li>
+        	</ul>
+        </section>
+
+        <section>
+        	<h3>Manos a la masa! </h3>
+        	<pre><code data-trim data-noescape>
+        		npm init
+        	</code></pre>
+        </section>
+
+        <section>
+        	<h3><a href="https://docs.npmjs.com/files/package.json">package.json</a></h3>
+        	<p>Todo lo que necesitar saber de esta applicación de node.js.</p>
+        	<pre><code data-trim data-noescape>
+{
+  "name": "cursos",
+  "version": "1.0.0",
+  "description": "REST API para cursos",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js" <-------<------<------<------ AGREGAR
+  },
+  "keywords": [
+    "REST"
+  ],
+  "author": "David Sanchez",
+  "license": "ISC"
+}
+        	</code></pre>
+        </section>
+
+        <section>
+        	<h3>Estructura de folderes</h3>
+        	<pre><code data-trim data-noescape>
+/
+	api/
+		controladores/
+			cursoControlador.js
+
+		modelos/
+			cursoModelo.js
+
+		rutas/
+			cursoRutas.js
+
+	node_modules/
+	server.js
+	package.json
+        	</code></pre>
+        </section>
+
+        <section>
+        	<h3>Dependencias</h3>
+        	<pre><code data-trim data-noescape>
+        		npm install --save mongoose
+        		npm install --save <a href="https://expressjs.com/">express</a>
+        		npm install --save body-parser
+        		npm install -g --save-dev nodemon
+        	</code></pre>
+        </section>
+
+        <section>
+        	<h3>server.js - Parte 1</h3>
+        	<pre><code data-trim data-noescape>
+var express = require('express'),
+app = express(),
+port = process.env.PORT || 3000;
+
+app.listen(port);
+
+console.log('todo list RESTful API server started on: ' + port);
+        	</code></pre>
+        	<hr/>
+        	<pre><code data-trim data-noescape>
+        		npm run start
+        	</code></pre>
+        </section>
+
+        <section>
+        	<h3>Modelos con mongoose</h3>
+        	<p>/api/modelos/cursoModelo.js</p>
+        	<pre><code data-trim data-noescape>
+'use strict';
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
+
+
+var CursoSchema = new Schema({
+  nombre: {
+    type: String,
+    required: 'Hace falta el nombre del curso.'
+  },
+  fecha_creacion: {
+    type: Date,
+    default: Date.now
+  },
+  estado: {
+    type: [{
+      type: String,
+      enum: ['faltante', 'en_progreso', 'completado']
+    }],
+    default: ['faltante']
+  },
+  nota: {
+    type: String,
+    default: 0
+  }
+});
+
+module.exports = mongoose.model('Cursos', CursoSchema);
+        	</code></pre>
+        </section>
+
+        <section>
+        	<h3>Rutas! A donde vamos?</h3>
+        	<p>/api/rutas/cursoRuta.js</p>
+        	<pre><code data-trim data-noescape>
+'use strict';
+module.exports = function(app) {
+	var cursoLista = require('../controladores/cursoControlador.js');
+
+	// cursoLista Routes
+	app.route('/cursos')
+		.get(cursoLista.listar_todos_cursos)
+		.post(cursoLista.crear_curso);
+
+
+	app.route('/cursos/:cursoid')
+		.get(cursoLista.leer_curso)
+		.put(cursoLista.actualizar_curso)
+		.delete(cursoLista.eliminar_curso);
+};
+        	</code></pre>
+        </section>
+
+        <section>
+        	<h3>Controlador - parte 1</h3>
+        	<p>/api/controladores/cursoControlador.js</p>
+        	<pre><code data-trim data-noescape>
+'use strict';
+
+
+var mongoose = require('mongoose'),
+  Curso = mongoose.model('Cursos');
+
+exports.listar_todos_cursos = function(req, res) {
+  Curso.find({}, function(err, task) {
+    if (err)
+      res.send(err);
+    res.json(task);
+  });
+};
+
+
+
+exports.crear_curso = function(req, res) {
+  var new_task = new Curso(req.body);
+  new_task.save(function(err, task) {
+    if (err)
+      res.send(err);
+    res.json(task);
+  });
+};
+
+
+exports.leer_curso = function(req, res) {
+  Curso.findById(req.params.cursoID, function(err, task) {
+    if (err)
+      res.send(err);
+    res.json(task);
+  });
+};
+
+
+(...)
+        	</code></pre>
+        </section>
+
+		<section>
+        	<h3>Controlador - parte 2</h3>
+        	<p>/api/controladores/cursoControlador.js</p>
+        	<pre><code data-trim data-noescape>
+(...)
+
+exports.actualizar_curso = function(req, res) {
+  Curso.findOneAndUpdate({
+    _id: req.params.cursoID
+  }, req.body, {
+    new: true
+  }, function(err, task) {
+    if (err)
+      res.send(err);
+    res.json(task);
+  });
+};
+
+
+exports.eliminar_curso = function(req, res) {
+  Curso.remove({
+    _id: req.params.cursoID
+  }, function(err, task) {
+    if (err)
+      res.send(err);
+    res.json({
+      message: 'Curso successfully deleted'
+    });
+  });
+};
+        	</code></pre>
+        </section>
+
+        <section>
+        	<h3>MongoDB</h3>
+        	<p>1. Crear una carpeta C:\Temp\</p>
+        	<p>2. Moverse a:</p>
+        	<pre><code data-trim data-noescape>C:\Program Files\MongoDB\Server\3.6\bin</code></pre>
+        	<p>3. Correr el siguiente comando:</p>
+        	<pre><code data-trim data-noescape>./mongod.exe --dbpath C:\Temp\</code></pre>
+        	<p>4. Listo! :) </p>
+        </section>
+
+        <section>
+        	<h3>API!</h3>
+        	<p>Volvemos al <i>root</i> (/) de nuestra applicación, donde esta server.js.</p>
+        	<pre><code data-trim data-noescape>npm run start</code></pre>
+        </section>
+
+        <section>
+        	<h3>Pruebas con ARC</h3>
+        	<p>Tambien pueden usar postman o cualquier cliente de REST.</p>
+        </section>
+
+        <section>
+        	<h3>Que falta?</h3>
+        	<ul>
+        		<li>Autenticación</li>
+        		<li>Contenerización</li>
+        		<li>Escalabilidad</li>
+        		<li>UI? (angular)</li>
+        		<li>y más...</li>
+        	</ul>
+        </section>
+
+        <section>
+        	<h1>Gracias!<h1>
+        </section>
+
+    </div></div>			</div>
+
+			<!-- The navigational controls UI -->
+			<aside class="controls">
+				<a class="left" href="#">&#x25C4;</a>
+				<a class="right" href="#">&#x25BA;</a>
+				<a class="up" href="#">&#x25B2;</a>
+				<a class="down" href="#">&#x25BC;</a>
+			</aside>
+
+			<!-- Displays presentation progress, max value changes via JS to reflect # of slides -->
+			<div class="progress"><span></span></div>
+
+		</div>
+
+		<!-- Optional libraries for code syntax highlighting and classList support in IE9 -->
+		<script src="lib/js/head.min.js"></script>
+
+		<script>
+			// Load the main reveal.js script
+			head.js( 'js/reveal.js', function() {
+				// Parse the query string into a key/value object
+				var query = {};
+
+				location.search.replace( /[A-Z0-9]+?=(\w*)/gi, function(a) {
+					query[ a.split( '=' ).shift() ] = a.split( '=' ).pop();
+				} );
+
+				// Fires when a slide with data-state=customevent is activated
+				Reveal.addEventListener( 'customevent', function() {
+					console.log( '"customevent" has fired' );
+				} );
+
+				// Fires each time a new slide is activated
+				Reveal.addEventListener( 'slidechanged', function( event ) {
+					// event.previousSlide, event.currentSlide, event.indexh, event.indexv
+				} );
+
+				Reveal.initialize({
+					// Display controls in the bottom right corner
+					controls: true,
+
+					// Display a presentation progress bar
+					progress: true,
+
+					// If true; each slide will be pushed to the browser history
+					history: true,
+
+					// Loops the presentation, defaults to false
+					loop: false,
+
+					// Flags if mouse wheel navigation should be enabled
+					mouseWheel: true,
+
+					// Apply a 3D roll to links on hover
+					rollingLinks: true,
+
+					// Transition style
+					transition: query.transition || 'default' // default/cube/page/concave/linear(2d)
+				});
+			} );
+
+			// Load third party scripts
+			head.js( 'lib/js/classList.js' );
+			head.js( 'lib/js/highlight.js', function() {
+				// Fire off syntax highlighting for potential code samples in the slides
+				hljs.initHighlightingOnLoad();
+			} );
+
+			// If we're runnning the notes server we need to include some additional JS
+			// TODO Is there a better way to determine if we're running the notes server?
+			if( window.location.host === 'localhost:1947' ) {
+				head.js( 'socket.io/socket.io.js', 'plugin/speakernotes/client.js' );
+			}
+		</script>
+
+	</body>
+</html>

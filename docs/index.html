@@ -34,7 +34,7 @@
         		<li>MongoDB - Mongoose schemas</li>
         	</ul>
         	<hr/>
-        	<p>En aproximandamente 1hr~.</p>
+        	<p>En aproximandamente 2hrs~.</p>
         </section>
 
       	<section>
@@ -86,6 +86,8 @@
         <section>
         	<h3><a href="https://docs.npmjs.com/files/package.json">package.json</a></h3>
         	<p>Todo lo que necesitar saber de esta applicación de node.js.</p>
+          <hr/>
+          <p>Agregar el script de start!</p>
         	<pre><code data-trim data-noescape>
 {
   "name": "cursos",
@@ -94,7 +96,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js" <-------<------<------<------ AGREGAR
+    "start": "nodemon server.js" 
   },
   "keywords": [
     "REST"
@@ -127,6 +129,7 @@
 
         <section>
         	<h3>Dependencias</h3>
+          <p>En caso de que tenga avierto package.json, cerrarlo.</p>
         	<pre><code data-trim data-noescape>
         		npm install --save mongoose
         		npm install --save <a href="https://expressjs.com/">express</a>
@@ -144,7 +147,7 @@ port = process.env.PORT || 3000;
 
 app.listen(port);
 
-console.log('todo list RESTful API server started on: ' + port);
+console.log('Servidor vacio en : ' + port);
         	</code></pre>
         	<hr/>
         	<pre><code data-trim data-noescape>
@@ -240,7 +243,7 @@ exports.crear_curso = function(req, res) {
 
 
 exports.leer_curso = function(req, res) {
-  Curso.findById(req.params.cursoID, function(err, task) {
+  Curso.findById(req.params.cursoid, function(err, task) {
     if (err)
       res.send(err);
     res.json(task);
@@ -260,7 +263,7 @@ exports.leer_curso = function(req, res) {
 
 exports.actualizar_curso = function(req, res) {
   Curso.findOneAndUpdate({
-    _id: req.params.cursoID
+    _id: req.params.cursoid
   }, req.body, {
     new: true
   }, function(err, task) {
@@ -273,7 +276,7 @@ exports.actualizar_curso = function(req, res) {
 
 exports.eliminar_curso = function(req, res) {
   Curso.remove({
-    _id: req.params.cursoID
+    _id: req.params.cursoid
   }, function(err, task) {
     if (err)
       res.send(err);
